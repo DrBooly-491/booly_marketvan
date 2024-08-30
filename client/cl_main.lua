@@ -14,21 +14,24 @@ local propModel = `xm3_prop_xm3_crate_ammo_01a`
 local actionMsg = "{keybind}primary_action{/keybind} Talk" 
 
 local spawnedVan, spawnedPed, vanBlip, spawnedProp, weaponObject
-local playerGreeted, inZone = false, false
+local playerGreeted, inZone, _usingMenu = false, false, false
+
+local _weaponsMenuList = {}
+local _itemsMenuList = {}
 
 local function dprint(msg)
     if not Config.Debug then return end
     print(msg)
 end
 
-local function getGroundLevel(x, y, z)
+--[[local function getGroundLevel(x, y, z)
     local groundZ
     RequestCollisionAtCoord(x, y, z)
     while not GetGroundZFor_3dCoord(x, y, x, groundZ, false) do
         Wait(0)
     end
     return groundZ
-end
+end]]
 
 local function greetPlayer()
     local playerPed = PlayerPedId()
@@ -114,6 +117,7 @@ function SpawnVan()
     spawnedPed = CreatePed(4, pedModel, location.x, location.y, location.z, location.w, true, false)
     SetEntityAsMissionEntity(spawnedPed, true, true)
 
+    SetEntityInvincible(spawnedPed, true)
     SetPedCanRagdoll(spawnedPed, false)
     SetPedCanBeShotInVehicle(spawnedPed, false)
     SetBlockingOfNonTemporaryEvents(spawnedPed, true)
@@ -160,7 +164,12 @@ function SpawnVan()
 
     dprint("Van spawned at: " .. tostring(location.x) .. ", " .. tostring(location.y) .. ", " .. tostring(location.z))
 
+<<<<<<< Updated upstream
     --[[if Config.Debug then -- had this for testing
+=======
+    -- had this for testing
+    --[[if Config.Debug then 
+>>>>>>> Stashed changes
         local playerPed = PlayerPedId()
         local spawnOffset = vector3(-15.0, -10.0, 0.0)
         local groundZ = getGroundLevel(location.x + spawnOffset.x, location.y + spawnOffset.y, location.z)
@@ -176,6 +185,8 @@ end
 local function cleanup()
     Action:Hide()
     ListMenu:Close()
+    _usingMenu = false
+
     if spawnedVan then
         DeleteVehicle(spawnedVan)
         spawnedVan = nil
@@ -193,8 +204,10 @@ local function cleanup()
         vanBlip = nil
     end
 
-    if weaponObject then DeleteObject(weaponObject) deleteWeaponCam() end
+    if weaponObject then cleanupWeapon() end
 end
+
+RegisterNetEvent('Blackmarket:Client:ForceCleanUp', cleanup)
 
 local isSpotlightActive = false
 
@@ -230,7 +243,6 @@ function spawnWeaponWithComponents(weapon, components)
     
     weaponObject = CreateWeaponObject(weaponAsset, 0, spawnPos, true, 0, 0)
     AttachEntityToEntity(weaponObject, spawnedVan, 0, offsetX, offsetY, offsetZ, 0.0, 0.0, 0.0, false, false, false, true, 2, true)
-    lib.showContext('weapon_sub_menu')
 
     CreateCamera()
 end
@@ -269,61 +281,57 @@ function RegisterWeaponsMenu()
     Callbacks:ServerCallback("Blackmarket:Van:GetWeapons", {}, function(Weapons)
         for _, weapon in pairs(Weapons) do
             WeaponsList[#WeaponsList+1] = {
-                title = ('View %s'):format(weapon.label),
+                label = ('View %s'):format(weapon.label),
                 description = string.format("Stock: %s | %s $%s", weapon.qty, formatDollars(weapon.price), weapon.coin),
-                onSelect = function()
-                    lib.registerContext({
-                        id = 'weapon_sub_menu',
-                        title = 'Black Market Van',
-                        menu = 'blackmarket_van_weapons',
-                        onBack = function()
-                            cleanupWeapon()
-                        end,
-                        onExit = function()
-                            cleanupWeapon()
-                        end,
-                        options = {
-                            {
-                                title = ('Buy %s'):format(weapon.label),
-                                icon = 'hand-holding-dollar',
-                                description = string.format("Stock: %s | %s $%s", weapon.qty, formatDollars(weapon.price), weapon.coin),
-                                onSelect = function()
-                                    cleanupWeapon()
-                                    lib.showContext('blackmarket_van_main')
-                                    TriggerEvent('Blackmarket:Client:Van:BuyWeapon', weapon.id)
-                                end,
-                            },
-                            {
-                                title = 'Never Mind',
-                                icon = 'ban',
-                                onSelect = function()
-                                    cleanupWeapon()
-                                    lib.showContext('blackmarket_van_weapons')
-                                end,
-                            }
-                        }
-                    })
-                    lib.showContext('weapon_sub_menu')
-                    spawnWeaponWithComponents(weapon.weapon, weapon.upgrades)
-                end,
+                event = 'daddy',
+                data = {
+                    title = 'Black Market Van',
+                    weaponData = weapon
+                }
             } 
         end
 
         if #WeaponsList == 0 then
             WeaponsList[#WeaponsList+1] = {
-                title = hasVpn and 'Out of stock bud' or 'Nothing to see here',
+                label = hasVpn and 'Out of stock bud' or 'Nothing to see here',
+                icon = 'skull-crossbones',
                 readOnly = true
             }
         end
 
-        lib.registerContext({
-            id = 'blackmarket_van_weapons',
-            title = hasVpn and 'Black Market Van' or 'Treys Van',
-            menu = 'blackmarket_van_main',
-            options = WeaponsList
-        })
+        GetWeaponsList(WeaponsList)     
     end)
 end
+
+RegisterNetEvent('daddy', function(data)
+    local weapon = data.weaponData
+    
+    _usingMenu = true
+
+    ListMenu:Show({
+        main = {
+            label = data.title,
+            items = {
+                {
+                    label = ('Buy %s'):format(weapon.label),
+                    description = string.format("Stock: %s | %s $%s", weapon.qty, formatDollars(weapon.price), weapon.coin),
+                    event = 'Blackmarket:Client:Van:BuyWeapon',
+                    data = weapon.id
+                },
+                {
+                    label = 'Never Mind',
+                    description = 'I Don\'t want this.',
+                    event = 'Blackmarket:Van:CleanWeaponUp'
+                },
+            }
+        },
+    })
+    spawnWeaponWithComponents(weapon.weapon, weapon.upgrades, data.title)
+end)
+
+RegisterNetEvent('Blackmarket:Van:CleanWeaponUp', function()
+    cleanupWeapon()
+end)
 
 function RegisterItemsMenu()
     local itemList = {}
@@ -335,33 +343,35 @@ function RegisterItemsMenu()
             local itemData = Inventory.Items:GetData(v.item)
             if v.qty > 0 then
                 itemList[#itemList+1] = {
-                    title = itemData.label,
+                    label = ('Buy %s'):format(itemData.label),
                     description = string.format("Stock: %s | %s $%s", v.qty, formatDollars(v.price), v.coin),
                     event = "Blackmarket:Client:Van:BuyItem",
-                    args = v.id,
+                    data = v.id,
                 }
             else
                 itemList[#itemList+1] = {
-                    title = itemData.label,
-                    description = "Sold Out",
+                    label = itemData.label,
+                    description = 'Sold Out',
                 }
             end
         end
 
         if #itemList == 0 then
             itemList[#itemList+1] = {
-                title = hasVpn and 'Out of stock bud' or 'Nothing to see here',
-                readOnly = true
+                label = hasVpn and 'Out of stock bud' or 'Nothing to see here',
             }
         end
-
-        lib.registerContext({
-            id = 'blackmarket_van_items',
-            title = hasVpn and 'Black Market Van' or 'Treys Van',
-            menu = 'blackmarket_van_main',
-            options = itemList
-        })
+  
+        GetItemsListdata(itemList)     
 	end)
+end
+
+function GetWeaponsList(data)
+    _weaponsMenuList = data
+end
+
+function GetItemsListdata(data)
+    _itemsMenuList = data
 end
 
 RegisterNetEvent('Characters:Client:Spawn')
@@ -403,46 +413,56 @@ AddEventHandler("Blackmarket:Client:Van:BuyItem", function(data)
 end)
 
 AddEventHandler("Blackmarket:Client:Van:BuyWeapon", function(data)
+    cleanupWeapon()
 	Callbacks:ServerCallback("Blackmarket:Van:BuyWeapon", data)
 end)
 
 AddEventHandler('Keybinds:Client:KeyUp:primary_action', function()
+    RegisterWeaponsMenu()
+    RegisterItemsMenu()
+
     local MenuItems = {}
     local hasVpn = Inventory.Check.Player:HasItem('vpn', 1)
 
-    if inZone then
-		dprint('i wanna talk')
+    Wait(150)
 
+    if inZone then
+        local weaponsMenu = _weaponsMenuList
+        local itemsMenu = _itemsMenuList
         PlayPedAmbientSpeechNative(spawnedPed, hasVpn and "GENERIC_SHOCKED_MED" or "GENERIC_INSULT_HIGH", "SPEECH_PARAMS_FORCE")
-                
-        RegisterWeaponsMenu()
-        RegisterItemsMenu()
 
         if hasVpn then
             MenuItems = {
                 {
-                    title = 'View Weapons',
-                    menu = 'blackmarket_van_weapons'
+                    label = 'View Weapons',
+                    submenu = 'blackmarket_van_weapons'
                 },
                 {
-                    title = 'View Items',
-                    menu = 'blackmarket_van_items'
+                    label = 'View Items',
+                    submenu = 'blackmarket_van_items'
                 }
             }
         else
-            MenuItems = {
-                {
-                    title = 'I dont wanna know you'
-                }
-            }
+            Notification:Error('I Don\'t wanna talk to you..')
+            return
         end
+        
+        _usingMenu = true
 
-        lib.registerContext({
-            id = 'blackmarket_van_main',
-            title = hasVpn and 'Black Market Van' or 'Treys Van',
-            options = MenuItems
+        ListMenu:Show({
+            main = {
+                label = hasVpn and 'Black Market Van' or 'Treys Van',
+                items = MenuItems
+            },
+            blackmarket_van_weapons = {
+                label = hasVpn and 'Black Market Van' or 'Treys Van',
+                items = weaponsMenu
+            },
+            blackmarket_van_items = {
+                label = hasVpn and 'Black Market Van' or 'Treys Van',
+                items = itemsMenu
+            },
         })
-        lib.showContext('blackmarket_van_main')
 	end
 end)
 
@@ -451,3 +471,12 @@ AddEventHandler('onResourceStop', function(resource)
         cleanup()
     end
 end)
+<<<<<<< Updated upstream
+=======
+
+AddEventHandler('ListMenu:Close', function()
+    if not _usingMenu then return end
+
+    cleanupWeapon()
+end)
+>>>>>>> Stashed changes

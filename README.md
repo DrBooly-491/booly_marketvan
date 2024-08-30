@@ -13,7 +13,6 @@
 
 ## Requirements
 
-- **[ox_lib](https://github.com/overextended/ox_lib)**: A library for various helper functions and utilities.
 - **Mythic Framework**: A framework providing essential components for role-playing scenarios in FiveM.
 
 ## Installation

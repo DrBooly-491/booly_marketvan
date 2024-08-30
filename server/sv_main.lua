@@ -1,7 +1,7 @@
 require 'utils'
 
 local _blackMarketItems = {
-	{ id = 1, item = "meth_table", coin = "PLEB", price = 1, qty = 1, vpn = true },
+	{ id = 1, item = "meth_table", coin = "PLEB", price = 400, qty = 5, vpn = true },
 }
 local _blackMarketWeapons = {    
     {
@@ -36,9 +36,13 @@ local _blackMarketWeapons = {
     },
     {
         id = 4,
+<<<<<<< Updated upstream
         label = 'Carbine Rifle',
+=======
+        label = 'Carbine Rifle (PD .556)',
+>>>>>>> Stashed changes
         coin = 'PLEB',
-        price = 450,
+        price = 1200,
         qty = 5,
         weapon = 'WEAPON_CARBINERIFLE',
         upgrades = {},
