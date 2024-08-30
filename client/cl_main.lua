@@ -160,13 +160,13 @@ function SpawnVan()
 
     dprint("Van spawned at: " .. tostring(location.x) .. ", " .. tostring(location.y) .. ", " .. tostring(location.z))
 
-    if Config.Debug then
+    --[[if Config.Debug then -- had this for testing
         local playerPed = PlayerPedId()
         local spawnOffset = vector3(-15.0, -10.0, 0.0)
         local groundZ = getGroundLevel(location.x + spawnOffset.x, location.y + spawnOffset.y, location.z)
         SetEntityCoordsNoOffset(playerPed, location.x + spawnOffset.x, location.y + spawnOffset.y, groundZ, true, true, true)
         dprint("Moved player outside the PolyZone to: " .. tostring(location.x + spawnOffset.x) .. ", " .. tostring(location.y + spawnOffset.y) .. ", " .. tostring(groundZ))
-    end
+    end]]
 end
 
 local function cleanupWeapon()
