@@ -91,7 +91,7 @@ function SpawnVan()
         Wait(0)
     end
 
-    local location = Config.Locations[math.random(#Config.Locations)]
+    local location = GlobalState["BlackmarketVan"]--Config.Locations[math.random(#Config.Locations)]
 
     spawnedVan = CreateVehicle(vanModel, location.x, location.y, location.z, location.w, true, false)
     SetEntityAsMissionEntity(spawnedVan, true, true)

@@ -45,6 +45,8 @@ local _blackMarketWeapons = {
 }
 
 AddEventHandler("Blackmarket:Server:Startup", function()
+    GlobalState["BlackmarketVan"] = Config.Locations[math.random(#Config.Locations)]
+    
     Callbacks:RegisterServerCallback("Blackmarket:Van:GetItems", function(source, data, cb)
         local bmItems = {}
 
