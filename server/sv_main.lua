@@ -36,7 +36,7 @@ local _blackMarketWeapons = {
     },
     {
         id = 4,
-        label = 'Carabine Rifle',
+        label = 'Carbine Rifle',
         coin = 'PLEB',
         price = 450,
         qty = 5,
