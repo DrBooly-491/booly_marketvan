@@ -1,7 +1,3 @@
-Config = {}
-require 'config'
-require 'utils'
-
 local vanModel = `speedo4`
 local pedModels = {
     `s_m_m_armoured_01`,
@@ -164,12 +160,8 @@ function SpawnVan()
 
     dprint("Van spawned at: " .. tostring(location.x) .. ", " .. tostring(location.y) .. ", " .. tostring(location.z))
 
-<<<<<<< Updated upstream
-    --[[if Config.Debug then -- had this for testing
-=======
     -- had this for testing
     --[[if Config.Debug then 
->>>>>>> Stashed changes
         local playerPed = PlayerPedId()
         local spawnOffset = vector3(-15.0, -10.0, 0.0)
         local groundZ = getGroundLevel(location.x + spawnOffset.x, location.y + spawnOffset.y, location.z)
@@ -471,12 +463,9 @@ AddEventHandler('onResourceStop', function(resource)
         cleanup()
     end
 end)
-<<<<<<< Updated upstream
-=======
 
 AddEventHandler('ListMenu:Close', function()
     if not _usingMenu then return end
 
     cleanupWeapon()
 end)
->>>>>>> Stashed changes

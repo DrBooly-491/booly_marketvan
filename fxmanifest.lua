@@ -16,11 +16,7 @@ server_scripts {
     'server/component.lua',
 }
 
-files {
+shared_scripts {
     'config.lua',
     'utils.lua'
-}
-
-shared_scripts {
-    'config.lua'
 }
