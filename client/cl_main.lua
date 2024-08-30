@@ -275,7 +275,7 @@ function RegisterWeaponsMenu()
             WeaponsList[#WeaponsList+1] = {
                 label = ('View %s'):format(weapon.label),
                 description = string.format("Stock: %s | %s $%s", weapon.qty, formatDollars(weapon.price), weapon.coin),
-                event = 'daddy',
+                event = 'Blackmarket:Van:PreviewWeapon',
                 data = {
                     title = 'Black Market Van',
                     weaponData = weapon
@@ -295,7 +295,7 @@ function RegisterWeaponsMenu()
     end)
 end
 
-RegisterNetEvent('daddy', function(data)
+RegisterNetEvent('Blackmarket:Van:PreviewWeapon', function(data)
     local weapon = data.weaponData
     
     _usingMenu = true
