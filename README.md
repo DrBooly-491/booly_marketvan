@@ -27,13 +27,35 @@
    - `ox_lib`
    - `Mythic Framework`
 
-3. **Add to Server Resources:**
+3. **Add Item to Inventory:**
+   - insert the tracker below the "fleeca_tracker" in `mythic-inventory/items/tools.lua`
+   - add the tracker somewhere, that players can buy, or get as reward from a heist
+   ```lua
+   {
+		name = "bkvan_tracker",
+		label = "GPS Tracker",
+		iconOverride = 'fleeca_tracker',
+		price = 15000,
+		isUsable = true,
+		isRemoved = false,
+		isStackable = false,
+		isDestroyed = true,
+		type = 7,
+		rarity = 4,
+		closeUi = true,
+		metalic = false,
+		weight = 1,
+		durability = (60 * 60 * 24 * 21),
+	},
+   ```
+
+4. **Add to Server Resources:**
    Add `booly_marketvan` to your server resources in the `server.cfg`:
    ```cfg
    ensure booly_marketvan
    ```
 
-4. **Configure the Script:**
+5. **Configure the Script:**
    Edit the `config.lua` file to adjust settings such as PolyZone locations, debug mode, etc.
 
 ## Configuration

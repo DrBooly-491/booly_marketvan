@@ -31,6 +31,31 @@ function RegisterComponents()
     }, function(error)
         if #error > 0 then return; end
         RetrieveComponents()
+        
+        Callbacks:RegisterClientCallback("Blackmarket:Van:MarkVan", function(data, cb)
+            local location = GlobalState["BlackmarketVan"]
+        
+            if location then
+                local blip = AddBlipForCoord(location.x, location.y, location.z)
+                SetBlipSprite(blip, 225)
+                SetBlipDisplay(blip, 4)
+                SetBlipScale(blip, 0.8)
+                SetBlipColour(blip, 5)
+                SetBlipAsShortRange(blip, true)
+                SetBlipCategory(blip, 2)
+                BeginTextCommandSetBlipName("STRING")
+                AddTextComponentString("Van Location")
+                EndTextCommandSetBlipName(blip)
+
+                SetTimeout((1000 * 5) * 10, function()
+                    RemoveBlip(blip)
+                end)
+
+                cb(true)
+            else
+                cb(false)
+            end
+        end)
     end)
 end
 

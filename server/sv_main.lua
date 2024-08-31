@@ -46,7 +46,7 @@ local _blackMarketWeapons = {
 
 AddEventHandler("Blackmarket:Server:Startup", function()
     GlobalState["BlackmarketVan"] = Config.Locations[math.random(#Config.Locations)]
-    
+
     Callbacks:RegisterServerCallback("Blackmarket:Van:GetItems", function(source, data, cb)
         local bmItems = {}
 
@@ -114,4 +114,32 @@ AddEventHandler("Blackmarket:Server:Startup", function()
             end
         end
     end)
+
+	Inventory.Items:RegisterUse("bkvan_tracker", "Blackmarket", function(source, slot, itemData)
+        local plyr = Fetch:Source(source)
+        if plyr ~= nil then
+            local char = plyr:GetData("Character")
+            if char ~= nil then
+                local pState = Player(source).state
+
+                Execute:Client(source, "Notification", "Info", "Locating Van...", 6000)
+        
+                Wait(math.random(2, 15) * 1000) -- 2 -15 second search time
+
+                Logger:Info("Blackmarket", string.format("%s %s (%s) Used Blackmarked Van GPS Tracker", char:GetData("First"), char:GetData("Last"), char:GetData("SID")))
+                Callbacks:ClientCallback(source, "Blackmarket:Van:MarkVan", nil, function(r) 
+                    if r then
+                        Inventory.Items:RemoveSlot(slot.Owner, slot.Name, 1, slot.Slot, 1)
+                        Execute:Client(
+                            source,
+                            "Notification",
+                            "Success",
+                            "A Van Has Been Marked On Your GPS",
+                            6000
+                        )
+                    end
+                end)
+            end
+        end
+	end)
 end)
