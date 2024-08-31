@@ -93,7 +93,7 @@ function SpawnVan()
 
     local location = GlobalState["BlackmarketVan"]--Config.Locations[math.random(#Config.Locations)]
 
-    spawnedVan = CreateVehicle(vanModel, location.x, location.y, location.z, location.w, true, false)
+    spawnedVan = CreateVehicle(vanModel, location.x, location.y, location.z, location.w, false, false)
     SetEntityAsMissionEntity(spawnedVan, true, true)
 
     SetVehicleUndriveable(spawnedVan, true)
@@ -110,7 +110,7 @@ function SpawnVan()
     SetVehicleColours(spawnedVan, primaryColor, secondaryColor)
     SetVehicleNumberPlateText(spawnedVan, plateText)
 
-    spawnedPed = CreatePed(4, pedModel, location.x, location.y, location.z, location.w, true, false)
+    spawnedPed = CreatePed(4, pedModel, location.x, location.y, location.z, location.w, false, false)
     SetEntityAsMissionEntity(spawnedPed, true, true)
 
     SetEntityInvincible(spawnedPed, true)
@@ -132,7 +132,7 @@ function SpawnVan()
     SetVehicleDoorsLockedForAllPlayers(spawnedVan, true)
 
     local propOffset = vector3(0.0, -1.15, -0.15)
-    spawnedProp = CreateObject(propModel, location.x + propOffset.x, location.y + propOffset.y, location.z + propOffset.z, true, true, true)
+    spawnedProp = CreateObject(propModel, location.x + propOffset.x, location.y + propOffset.y, location.z + propOffset.z, false, true, true)
     SetEntityAsMissionEntity(spawnedProp, true, true)
     AttachEntityToEntity(spawnedProp, spawnedVan, 0, propOffset.x, propOffset.y, propOffset.z, 0.0, 0.0, 0.0, false, false, false, true, 2, true)
 
