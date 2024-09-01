@@ -75,34 +75,34 @@ function greetPlayerThread()
 end
 
 function SpawnVan()
-    dprint('Requesting Van Model')
+    Logger:Log('BlackmarketVan', 'Requesting Van Model')
     RequestModel(vanModel)
     while not HasModelLoaded(vanModel) do
         Wait(0)
     end
 
-    dprint('Van Model will load')
+    Logger:Log('BlackmarketVan', 'Van Model will load')
 
     local pedModel = pedModels[math.random(#pedModels)]
-    dprint('Requesting Ped Model ' .. pedModel)
+    Logger:Log('BlackmarketVan', 'Requesting Ped Model ' .. pedModel)
     RequestModel(pedModel)
     while not HasModelLoaded(pedModel) do
         Wait(0)
     end
 
-    dprint('Ped Model will load')
+    Logger:Log('BlackmarketVan', 'Ped Model will load')
     
-    dprint('Requesting Prop Model ' .. propModel)
+    Logger:Log('BlackmarketVan', 'Requesting Prop Model ' .. propModel)
     RequestModel(propModel)
     while not HasModelLoaded(propModel) do
         Wait(0)
     end
 
-    dprint('Prop Model will load')
+    Logger:Log('BlackmarketVan', 'Prop Model will load')
 
     local location = GlobalState["BlackmarketVan"]--Config.Locations[math.random(#Config.Locations)]
 
-    dprint('Setting van coords to ' .. tostring(location.x) .. ", " .. tostring(location.y) .. ", " .. tostring(location.z))
+    Logger:Log('BlackmarketVan', 'Setting van coords to ' .. tostring(location.x) .. ", " .. tostring(location.y) .. ", " .. tostring(location.z))
 
     spawnedVan = CreateVehicle(vanModel, location.x, location.y, location.z, location.w, false, false)
     SetEntityAsMissionEntity(spawnedVan, true, true)
@@ -169,7 +169,7 @@ function SpawnVan()
         EndTextCommandSetBlipName(vanBlip)
     end
 
-    dprint("Van spawned at: " .. tostring(location.x) .. ", " .. tostring(location.y) .. ", " .. tostring(location.z))
+    Logger:Log('BlackmarketVan', "Van spawned at: " .. tostring(location.x) .. ", " .. tostring(location.y) .. ", " .. tostring(location.z))
 
     -- had this for testing
     --[[if Config.Debug then 
@@ -379,6 +379,7 @@ end
 
 RegisterNetEvent('Characters:Client:Spawn')
 AddEventHandler('Characters:Client:Spawn', function()
+    Logger:Log('BlackmarketVan', 'character loaded, running SpawnVan()')
     SpawnVan()
 end)
 
@@ -480,3 +481,5 @@ AddEventHandler('ListMenu:Close', function()
 
     cleanupWeapon()
 end)
+
+print('script ready')
