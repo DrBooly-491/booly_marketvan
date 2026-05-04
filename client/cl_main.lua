@@ -175,8 +175,8 @@ local function cleanupWeapon()
 end
 
 local function cleanup()
-    Action:Hide()
-    ListMenu:Close()
+    ActionHide()
+    ListMenuClose()
     _usingMenu = false
 
     if spawnedVan then
@@ -268,9 +268,9 @@ end
 
 function RegisterWeaponsMenu()
     local WeaponsList = {}
-    local hasVpn = Inventory.Check.Player:HasItem('vpn', 1)
+    local hasVpn = HasVpn()
 
-    Callbacks:ServerCallback("Blackmarket:Van:GetWeapons", {}, function(Weapons)
+    ServerCallback("Blackmarket:Van:GetWeapons", {}, function(Weapons)
         for _, weapon in pairs(Weapons) do
             WeaponsList[#WeaponsList+1] = {
                 label = ('View %s'):format(weapon.label),
@@ -300,7 +300,7 @@ RegisterNetEvent('Blackmarket:Van:PreviewWeapon', function(data)
     
     _usingMenu = true
 
-    ListMenu:Show({
+    ListMenuShow({
         main = {
             label = data.title,
             items = {
@@ -327,12 +327,11 @@ end)
 
 function RegisterItemsMenu()
     local itemList = {}
-    local hasVpn = Inventory.Check.Player:HasItem('vpn', 1)
+    local hasVpn = HasVpn()
     
-    Callbacks:ServerCallback("Blackmarket:Van:GetItems", {}, function(items)
-
+    ServerCallback("Blackmarket:Van:GetItems", {}, function(items)
         for k, v in ipairs(items) do
-            local itemData = Inventory.Items:GetData(v.item)
+            local itemData = GetInvData(v.item)
             if v.qty > 0 then
                 itemList[#itemList+1] = {
                     label = ('Buy %s'):format(itemData.label),
@@ -381,7 +380,7 @@ AddEventHandler("Polyzone:Enter", function(id, testedPoint, insideZones, data)
         local h = GetEntityHeading(PlayerPedId())
         if h >= data.minH and h <= data.maxH then
             inZone = true
-            Action:Show(actionMsg)
+            ActionShow(actionMsg)
             SetVehicleDoorOpen(spawnedVan, 2, false, false)
             SetVehicleDoorOpen(spawnedVan, 3, false, false)
             Citizen.CreateThread(greetPlayerThread)
@@ -395,18 +394,18 @@ AddEventHandler("Polyzone:Exit", function(id, testedPoint, insideZones, data)
         SetVehicleDoorShut(spawnedVan, 2, false)
         SetVehicleDoorShut(spawnedVan, 3, false)
         sayGoodbye()
-        Action:Hide()
-		ListMenu:Close()
+        ActionHide()
+		ListMenuClose()
     end
 end)
 
 AddEventHandler("Blackmarket:Client:Van:BuyItem", function(data)
-	Callbacks:ServerCallback("Blackmarket:Van:BuyItem", data)
+	ServerCallback("Blackmarket:Van:BuyItem", data)
 end)
 
 AddEventHandler("Blackmarket:Client:Van:BuyWeapon", function(data)
     cleanupWeapon()
-	Callbacks:ServerCallback("Blackmarket:Van:BuyWeapon", data)
+	ServerCallback("Blackmarket:Van:BuyWeapon", data)
 end)
 
 AddEventHandler('Keybinds:Client:KeyUp:primary_action', function()
@@ -414,7 +413,7 @@ AddEventHandler('Keybinds:Client:KeyUp:primary_action', function()
     RegisterItemsMenu()
 
     local MenuItems = {}
-    local hasVpn = Inventory.Check.Player:HasItem('vpn', 1)
+    local hasVpn = HasVpn()
 
     Wait(150)
 
@@ -435,13 +434,16 @@ AddEventHandler('Keybinds:Client:KeyUp:primary_action', function()
                 }
             }
         else
-            Notification:Error('I Don\'t wanna talk to you..')
+            Notify({
+                msg = 'I Don\'t wanna talk to you..',
+                type = 'error'
+            })
             return
         end
         
         _usingMenu = true
 
-        ListMenu:Show({
+        ListMenuShow({
             main = {
                 label = hasVpn and 'Black Market Van' or 'Treys Van',
                 items = MenuItems
