@@ -12,6 +12,7 @@ client_scripts {
 }
 
 server_scripts {
+    'server/sv_config.lua',
     'server/sv_main.lua',
     'server/component.lua',
 }
