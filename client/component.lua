@@ -115,7 +115,7 @@ function ListMenuShow(data)
 		ListMenu:Show(data)
 	elseif Config.Framework == 'sandbox' and GetResourceState('sandbox-hud') == 'started' then
 		exports['sandbox-hud']:ListMenuShow('marketvan', data)
-	elseif Config.Framework == 'sandbox' and GetResourceState('pulsar-hud') == 'started' then
+	elseif Config.Framework == 'pulsar' and GetResourceState('pulsar-hud') == 'started' then
 		exports['pulsar-hud']:ListMenuShow('marketvan', data)
 	else
 		print('[ListMenuShow] Config not set up correctly..')
@@ -127,7 +127,7 @@ function ListMenuClose()
 		ListMenu:Close()
 	elseif Config.Framework == 'sandbox' and GetResourceState('sandbox-hud') == 'started' then
 		exports['sandbox-hud']:ListMenuClose('marketvan', action)
-	elseif Config.Framework == 'sandbox' and GetResourceState('pulsar-hud') == 'started' then
+	elseif Config.Framework == 'pulsar' and GetResourceState('pulsar-hud') == 'started' then
 		exports['pulsar-hud']:ListMenuClose('marketvan', action)
 	else
 		print('[ListMenuClose] Config not set up correctly..')
@@ -139,7 +139,7 @@ function ActionShow(action)
 		Action:Show(action)
 	elseif Config.Framework == 'sandbox' and GetResourceState('sandbox-hud') == 'started' then
 		exports['sandbox-hud']:ActionShow('marketvan', action)
-	elseif Config.Framework == 'sandbox' and GetResourceState('pulsar-hud') == 'started' then
+	elseif Config.Framework == 'pulsar' and GetResourceState('pulsar-hud') == 'started' then
 		exports['pulsar-hud']:ActionShow('marketvan', action)
 	else
 		print('[ActionShow] Config not set up correctly..')
@@ -151,7 +151,7 @@ function ActionHide()
 		Action:Hide()
 	elseif Config.Framework == 'sandbox' and GetResourceState('sandbox-hud') == 'started' then
 		exports['sandbox-hud']:ActionHide('marketvan')
-	elseif Config.Framework == 'sandbox' and GetResourceState('pulsar-hud') == 'started' then
+	elseif Config.Framework == 'pulsar' and GetResourceState('pulsar-hud') == 'started' then
 		exports['pulsar-hud']:ActionHide('marketvan')
 	else
 		print('[ActionHide] Config not set up correctly..')
