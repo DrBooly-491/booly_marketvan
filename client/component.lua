@@ -162,7 +162,7 @@ function HasVpn()
 	if Config.Framework == 'mythic' and GetResourceState('mythic-base') == 'started' then
 		return Inventory.Check.Player:HasItem(Config.VpnItem, 1)
 	elseif (Config.Framework == 'sandbox' or Config.Framework == 'pulsar') and GetResourceState('ox_inventory') == 'started' then
-		return exports.ox_inventory:CheckPlayerHasItem(Config.VpnItem, 1)
+		return exports.ox_inventory:Search('count', Config.VpnItem, 1)
 	else
 		print('[HasVpn] Config not set up correctly..')
 	end
@@ -174,7 +174,7 @@ function GetInvData(item)
 	if Config.Framework == 'mythic' and GetResourceState('mythic-base') == 'started' then
 		return Inventory.Items:GetData(item)
 	elseif (Config.Framework == 'sandbox' or Config.Framework == 'pulsar') and GetResourceState('ox_inventory') == 'started' then
-		return exports.ox_inventory:Search('count', Config.VpnItem, 1)
+		return exports.ox_inventory:ItemsGetData(Config.VpnItem, 1)
 	else
 		print('[GetInvData] Config not set up correctly..')
 	end
