@@ -13,7 +13,9 @@ HUD = nil
 
 AddEventHandler("Blackmarket:Shared:DependencyUpdate", RetrieveComponents)
 function RetrieveComponents()
-	if Config.Framework ~= 'mythic' and GetResourceState('mythic-base') ~= 'started' then return end
+	if Config.Framework == 'mythic' and GetResourceState('mythic-base') ~= 'started' then return end
+	if Config.Framework ~= 'mythic' then return end
+
     Logger = exports["mythic-base"]:FetchComponent("Logger")
     Fetch = exports["mythic-base"]:FetchComponent("Fetch")
     Callbacks = exports["mythic-base"]:FetchComponent("Callbacks")
@@ -56,25 +58,32 @@ function RegisterMarketCallback()
 end
 
 function RegisterComponents()
-	if Config.Framework ~= 'mythic' and GetResourceState('mythic-base') ~= 'started' then return end
-    exports["mythic-base"]:RequestDependencies("Blackmarket", {
-        "Logger",
-        "Fetch",
-        "Callbacks",
-        "Notification",
-        "Utils",
-        "Polyzone",
-        "ListMenu",
-        "Action",
-        "Blips",
-        "Keybinds",
-        "Inventory",
-        "Hud",
-    }, function(error)
-        if #error > 0 then return; end
-        RetrieveComponents()
-        RegisterMarketCallback()
-    end)
+	if Config.Framework == 'mythic' and GetResourceState('mythic-base') ~= 'started' then return end
+
+	if Config.Framework == 'mythic' then
+		exports["mythic-base"]:RequestDependencies("Blackmarket", {
+			"Logger",
+			"Fetch",
+			"Callbacks",
+			"Notification",
+			"Utils",
+			"Polyzone",
+			"ListMenu",
+			"Action",
+			"Blips",
+			"Keybinds",
+			"Inventory",
+			"Hud",
+		}, function(error)
+			if #error > 0 then return; end
+			RetrieveComponents()
+			RegisterMarketCallback()
+		end)
+		return
+	end
+
+	RetrieveComponents()
+	RegisterMarketCallback()
 end
 
 AddEventHandler("Core:Shared:Ready", RegisterComponents)
